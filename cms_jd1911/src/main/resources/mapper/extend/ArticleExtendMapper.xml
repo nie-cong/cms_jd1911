@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.cms.dao.extend.ArticleExtendMapper">
+
+  <!--通过 category_id查到对应的cms_category栏目表的信息，存到结果集中
+ 		 通过 author_id查到对应的cms_user栏目表的信息，存到结果集中
+ 		 将Comment的CommentExtendMapper扩展类的方法通过article_id查询到的该文章的所有评论，存放到结果集中
+  -->
+  <resultMap id="ArticleExtendResultMap" 
+     		 type="com.briup.apps.cms.bean.extend.ArticleExtend"
+     		 extends="com.briup.apps.cms.dao.ArticleMapper.BaseResultMap">
+     	
+     <!-- 通过category_id找到对应的 Category栏目放入结果集，单个使用assocation-->	 
+     <association 
+     property="category"
+     column="category_id"
+     select="com.briup.apps.cms.dao.CategoryMapper.selectByPrimaryKey"
+     ></association>
+     
+      <!-- 通过author_id找到对应的 User用户放入结果集，单个使用assocation-->	
+     <association 
+     property="author"
+     column="author_id"
+     select="com.briup.apps.cms.dao.UserMapper.selectByPrimaryKey"
+     ></association>
+     
+     <!--通过文章article_id查找所有评论，将所有评论放入结果集，有多个使用collection  -->
+     <collection property="comments" column="id"
+     	select="com.briup.apps.cms.dao.extend.CommentExtendMapper.selectByArticleId"
+     ></collection>
+  </resultMap>
+  
+ 	 <!-- Article文章表的级联查询，查询Article表信息和对应的Category表信息 
+						和User用户形象（Author作者）
+		-->
+  <select id="selectAll" resultMap="ArticleExtendResultMap">
+  		SELECT *
+  		FROM CMS_ARTICLE
+  </select>
+  
+  <!--通过id查文章，查询某个指定文章，显示单个文章同时显示所有评论  -->
+  <select id="selectById" parameterType="long" resultMap="ArticleExtendResultMap">
+  		SELECT *
+  		FROM CMS_ARTICLE
+  		WHERE id=#{id,jdbcType=BIGINT}
+  </select>
+</mapper>

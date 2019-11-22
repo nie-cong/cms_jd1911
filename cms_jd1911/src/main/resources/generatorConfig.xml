@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<!-- mybatis-generator的核心配置文件 -->
+<generatorConfiguration>
+
+    <!-- 数据库驱动包位置 -->  
+    <!-- 由于在pom.xml中加入插件时已经配置数据库驱动包，所以此处不必配置了-->
+  <!--<classPathEntry location="D:\gg\repository\mysql\mysql-connector-java\8.0.16\mysql-connector-java-8.0.16.jar" />-->
+  <!-- <classPathEntry location="/Users/lichunyu/springboot/repository/mysql/mysql-connector-java/8.0.16/mysql-connector-java-8.0.16.jar" /> -->
+  <context id="DB2Tables" targetRuntime="MyBatis3">
+	<!--GMT%2B8时区为东八区  -->
+    <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"    
+        connectionURL="jdbc:mysql://127.0.0.1:3306/cms_web1911?serverTimezone=GMT%2B8"
+        userId="root"
+        password="briup">
+      <!--产生selectByPrimaryKey-->
+      <property name="useInformationSchema" value="true" />
+    </jdbcConnection>
+
+
+	<!--指定生成的类型为java类型，避免数据库中number等类型字段 -->
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+	<!--自动生成的实体的存放包路径 -->
+    <javaModelGenerator targetPackage="com.briup.apps.cms.bean" targetProject="./src/main/java">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+	<!--自动生成的*Mapper.xml文件存放路径 -->
+    <sqlMapGenerator targetPackage="mapper"  targetProject="./src/main/resources">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+
+	<!--自动生成的*Mapper.java存放路径 -->
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.briup.apps.cms.dao"  targetProject="./src/main/java">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+
+
+	<!-- 映射配置,要生成的表，tableName是数据库中的表名或视图名 domainObjectName是实体类名 -->
+    <!---->
+    <table tableName="base_user" domainObjectName="User" ></table>
+    <table tableName="cms_logs" domainObjectName="Logs" ></table>
+    <table tableName="base_privilege" domainObjectName="Privilege" ></table>
+    <table tableName="base_role" domainObjectName="Role" ></table>
+    <table tableName="base_user_role" domainObjectName="User_Role" ></table>
+    <table tableName="base_role_privilege" domainObjectName="Role_Privilege" ></table>
+    <table tableName="cms_category" domainObjectName="Category" ></table>
+    <table tableName="cms_article" domainObjectName="Article" >
+    <!-- 数据库中有text字段bean目录下会生成带有WithBLOBs文件，因为varchar和text在java中都是String需要进行去分，所有生成该文件 -->
+	<!-- 不使用文件的解决方法，添加下列内容,再次运行这个文件,就可以删除bean包下的WithBLOBS文件 -->
+    	<columnOverride column="content" javaType="java.lang.String" jdbcType="VARCHAR"></columnOverride>
+    	<columnOverride column="source" javaType="java.lang.String" jdbcType="VARCHAR"></columnOverride>
+    	
+    </table>
+    <table tableName="cms_comment" domainObjectName="Comment" >
+     	<columnOverride column="content" javaType="java.lang.String" jdbcType="VARCHAR"></columnOverride>  
+    </table>
+	
+	<!-- 数据库中有text字段bean目录下会生成带有WithBolBs文件，因为varchar和text在java中都是String需要进行去分，所有生成该文件 -->
+	<!-- 不使用文件的解决方法，添加下列内容 -->
+	
+	
+	
+	<!--
+	 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+	 
+	 run as ->run configrations->Maven bulid->new configrations->把此命令mybatis-generator:generate放到Goals选好需要生成的项目
+	-->
+
+
+
+  </context>
+</generatorConfiguration>
